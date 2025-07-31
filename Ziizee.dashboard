@@ -1,0 +1,94 @@
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { useState } from "react"
+
+const sampleSales = [
+  { date: "2025-07-01", total: 200000 },
+  { date: "2025-07-02", total: 300000 },
+  { date: "2025-07-03", total: 150000 },
+]
+
+const sampleExpenses = [
+  { date: "2025-07-01", amount: 150000 },
+  { date: "2025-07-02", amount: 75000 },
+]
+
+const sampleStock = [
+  { name: "Ayam", stock: 10, min: 5 },
+  { name: "Lele", stock: 5, min: 3 },
+  { name: "Sambel", stock: 3, min: 2 },
+  { name: "Nasi", stock: 20, min: 10 },
+  { name: "Minyak", stock: 10, min: 5 },
+]
+
+export default function DashboardZiizee() {
+  const [tab, setTab] = useState("penjualan")
+
+  return (
+    <div className="p-4 grid gap-4">
+      <h1 className="text-2xl font-bold text-center text-red-600">Dashboard Keuangan Ziizee</h1>
+
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
+        <TabsList className="grid grid-cols-3 gap-2">
+          <TabsTrigger value="penjualan">Penjualan</TabsTrigger>
+          <TabsTrigger value="pengeluaran">Pengeluaran</TabsTrigger>
+          <TabsTrigger value="stok">Stok</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="penjualan">
+          <Card>
+            <CardContent className="p-4">
+              <h2 className="text-lg font-semibold">Grafik Penjualan</h2>
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={sampleSales}>
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="total" stroke="#ef4444" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="pengeluaran">
+          <Card>
+            <CardContent className="p-4">
+              <h2 className="text-lg font-semibold">Daftar Pengeluaran</h2>
+              <ul className="mt-2 space-y-2">
+                {sampleExpenses.map((e, i) => (
+                  <li key={i} className="flex justify-between">
+                    <span>{e.date}</span>
+                    <span>Rp {e.amount.toLocaleString()}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="stok">
+          <Card>
+            <CardContent className="p-4">
+              <h2 className="text-lg font-semibold">Stok Bahan Baku</h2>
+              <ul className="mt-2 space-y-2">
+                {sampleStock.map((item, i) => (
+                  <li key={i} className="flex justify-between">
+                    <span>{item.name}</span>
+                    <span className={item.stock <= item.min ? "text-red-500" : ""}>
+                      {item.stock} {item.stock <= item.min && "(Habis!)"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      <Button className="w-full mt-4 bg-red-600 hover:bg-red-700">Export Laporan Bulanan (PDF)</Button>
+    </div>
+  )
+}
